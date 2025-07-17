@@ -1,7 +1,7 @@
 
-# Welcome to your CDK Python project!
+# CDK Python project - AWS EKS
 
-This is a blank project for CDK development with Python.
+This is a CDK development project with Python.
 
 The `cdk.json` file tells the CDK Toolkit how to execute your app.
 
@@ -17,35 +17,29 @@ To manually create a virtualenv on MacOS and Linux:
 ```
 $ python -m venv .venv
 ```
-
-After the init process completes and the virtualenv is created, you can use the following
-step to activate your virtualenv.
-
 ```
 $ source .venv/bin/activate
 ```
 
-If you are a Windows platform, you would activate the virtualenv like this:
 
-```
-% .venv\Scripts\activate.bat
-```
+Follow the below steps to run locally:
 
-Once the virtualenv is activated, you can install the required dependencies.
-
+Install all required dependencies.
 ```
 $ pip install -r requirements.txt
 ```
-
+This creates a package for custom resource lambda's layer.
+```
+$ ./preparedependency.sh
+```
 At this point you can now synthesize the CloudFormation template for this code.
-
 ```
 $ cdk synth
+$ cdk deploy
 ```
+Repository structure:
 
-To add additional dependencies, for example other CDK libraries, just add
-them to your `setup.py` file and rerun the `pip install -r requirements.txt`
-command.
+app.py
 
 ## Useful commands
 
