@@ -31,8 +31,8 @@ eks:
   node_group:
     managed:
       min: 0
-      max: 1
-      desired: 1
+      max: 2
+      desired: 2
       disk_size: 20
       type:
       - i_class: "t2"

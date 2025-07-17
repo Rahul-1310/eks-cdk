@@ -25,7 +25,7 @@ class HelmValuesProvider(Construct):
         self.custom_lambda = self._create_custom_lambda()
         self.provider = self._create_provider()
         self.helm_values = self._create_custom_resource()
-    
+        print(type(self.helm_values))
     def _create_lambda_layer(self) -> _lambda.LayerVersion:
         try:
             layer = _lambda.LayerVersion(

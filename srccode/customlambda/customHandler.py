@@ -18,7 +18,6 @@ def on_create_or_update(event, context):
     logger.info("Received event: %s", json.dumps(event))
 
     ssm_param_key = event['ResourceProperties'].get('SSMParamName')
-    logger.error("SSMParamKey: %s", ssm_param_key)
     if not ssm_param_key:
         logger.error("SSMParamKey is missing from ResourceProperties")
         raise ValueError("SSMParamKey property is required")
@@ -46,7 +45,7 @@ def on_create_or_update(event, context):
         logger.error("Unsupported SSM parameter value: '%s'", ssm_value)
         raise ValueError(f"Unsupported SSM parameter value '{ssm_value}'")
 
-    # Build Helm values
+    # Build helm values
     helm_values = {
         "controller": {
             "replicaCount": replica_count
@@ -55,16 +54,16 @@ def on_create_or_update(event, context):
 
     logger.info("Generated Helm values: %s", json.dumps(helm_values))
 
-    # Return Helm values as custom resource attributes
+    # Return helm values
     helper.Data["HelmValues"] = json.dumps(helm_values)
 
-    # Return a PhysicalResourceId
+    # Return a physical resource id
     return f"HelmValues-{ssm_param_key}"
 
 @helper.delete
 def on_delete(event, context):
 
-    #No cleanup required since nothing is created externally.
+    #No cleanup required since nothnig is created.
     logger.info("Delete event received. No action needed.")
     return
 
