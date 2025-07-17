@@ -1,2 +1,9 @@
 aws-cdk-lib==2.202.0
 constructs>=10.0.0,<11.0.0
+omegaconf==2.0.1
+importlib
+aws-cdk.lambda-layer-kubectl-v32
+crhelper >= 2.0.8
+boto3
+moto
+pytest

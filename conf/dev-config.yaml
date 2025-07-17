@@ -1,0 +1,42 @@
+environment: 
+  ssmParameterName: "/platform/account/env"
+  ssmParameterValue: "development"
+  name: dev
+  tags:
+    - key: project
+      value: cdk-swisscom
+    - key: owner
+      value: Raul
+vpc:
+  cidr: "10.10.0.0/16"
+  azs: 2
+  public_subnets: 
+    enabled: true
+    primary_cidr_masks: 
+    - 24
+    - 24
+  private_subnets: 
+    enabled: true
+    primary_cidr_masks: 
+    - 24
+    - 24
+  nat_gateways:
+    enabled: true
+eks:
+  cluster_name: "dev-cluster"
+  version: "32"
+  admin_access:
+    - "arn:aws:iam::449071212803:user/deut"
+    - "arn:aws:iam::449071212803:role/cdk-hnb659fds-cfn-exec-role-449071212803-eu-central-1"
+  node_group:
+    managed:
+      min: 0
+      max: 1
+      desired: 1
+      disk_size: 20
+      type:
+      - i_class: "t2"
+        i_size: "micro"
+  additional_addons:
+    - name: "vpc-cni"
+      version: "1.12.0"

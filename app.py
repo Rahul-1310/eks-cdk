@@ -1,28 +1,32 @@
 #!/usr/bin/env python3
 import os
-
+from boto3 import client, session
 import aws_cdk as cdk
+from omegaconf import OmegaConf
+from utils.config_loader import load_config
+from network.networkstack import NetworkStack
+from eks.eksstack import EksStack
+from bootstrap.bootstrapStack import bootstrapStack
 
-from eks.eks_stack import EksStack
+# Load config
+conf, env_name = load_config()
 
+# Get AWS account and regio
+account = client('sts').get_caller_identity()['Account']
+region = session.Session().region_name
 
+# Initialize the CDK application
 app = cdk.App()
-EksStack(app, "EksStack",
-    # If you don't specify 'env', this stack will be environment-agnostic.
-    # Account/Region-dependent features and context lookups will not work,
-    # but a single synthesized template can be deployed anywhere.
+env = cdk.Environment(account=account, region=region)
 
-    # Uncomment the next line to specialize this stack for the AWS Account
-    # and Region that are implied by the current CLI configuration.
+NetworkStackObj = NetworkStack(app, f"{env_name}-NetworkStack", env=env, conf=conf)
+EksStackObj = EksStack(app, f"{env_name}-EksStack", env=env, _vpc=NetworkStackObj._vpc,conf=conf)
+BootstrapStackObj = bootstrapStack(app, f"{env_name}-BootstrapStack", env=env,ekscluster=EksStackObj.ekscluster,conf=conf)
 
-    #env=cdk.Environment(account=os.getenv('CDK_DEFAULT_ACCOUNT'), region=os.getenv('CDK_DEFAULT_REGION')),
-
-    # Uncomment the next line if you know exactly what Account and Region you
-    # want to deploy the stack to. */
-
-    #env=cdk.Environment(account='123456789012', region='us-east-1'),
-
-    # For more information, see https://docs.aws.amazon.com/cdk/latest/guide/environments.html
-    )
+# add application level tags
+for k,v in enumerate(conf.environment.tags):
+    cdk.Tags.of(NetworkStackObj).add(v.key, v.value)
+    cdk.Tags.of(EksStackObj).add(v.key, v.value)
+    cdk.Tags.of(BootstrapStackObj).add(v.key, v.value)
 
 app.synth()
