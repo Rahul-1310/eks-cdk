@@ -21,7 +21,7 @@ env = cdk.Environment(account=account, region=region)
 
 NetworkStackObj = NetworkStack(app, f"{env_name}-NetworkStack", env=env, conf=conf)
 EksStackObj = EksStack(app, f"{env_name}-EksStack", env=env, _vpc=NetworkStackObj._vpc,conf=conf)
-BootstrapStackObj = bootstrapStack(app, f"{env_name}-BootstrapStack", env=env,ekscluster=EksStackObj.ekscluster,conf=conf)
+BootstrapStackObj = bootstrapStack(app, f"{env_name}-BootstrapperStack", env=env,ekscluster=EksStackObj.ekscluster,conf=conf)
 
 # add application level tags
 for k,v in enumerate(conf.environment.tags):

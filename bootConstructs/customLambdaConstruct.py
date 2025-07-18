@@ -8,6 +8,7 @@ from aws_cdk import (
     Duration,
     Stack
 )
+from datetime import datetime
 import aws_cdk
 import os
 from constructs import Construct
@@ -23,7 +24,6 @@ class HelmValuesProvider(Construct):
 
         self.lambda_layer = self._create_lambda_layer()
         self.custom_lambda = self._create_custom_lambda()
-        self.provider = self._create_provider()
         self.helm_values = self._create_custom_resource()
         print(type(self.helm_values))
     def _create_lambda_layer(self) -> _lambda.LayerVersion:
@@ -31,11 +31,11 @@ class HelmValuesProvider(Construct):
             layer = _lambda.LayerVersion(
                 self,
                 "LambdaLayer",
-                code=_lambda.Code.from_asset("lambda_dependencies"),
+                code=_lambda.Code.from_asset(os.path.join("srccode", "lambda_dependencies")),
                 compatible_runtimes=[_lambda.Runtime.PYTHON_3_12],
                 description="Layer with shared dependencies for Lambda functions"
             )
-            layer.apply_removal_policy(RemovalPolicy.RETAIN)
+            #layer.apply_removal_policy(RemovalPolicy.RETAIN)
             return layer
         except Exception as e:
             raise RuntimeError(f"Failed to create Lambda Layer: {e}")
@@ -51,7 +51,7 @@ class HelmValuesProvider(Construct):
                 log_retention=logs.RetentionDays.ONE_WEEK
             )
             func.add_layers(self.lambda_layer)
-            func.apply_removal_policy(RemovalPolicy.RETAIN)
+            #func.apply_removal_policy(RemovalPolicy.RETAIN)
 
             func.add_to_role_policy(
                 iam.PolicyStatement(
@@ -62,29 +62,20 @@ class HelmValuesProvider(Construct):
             return func
         except Exception as e:
             raise RuntimeError(f"Failed to create Lambda Function: {e}")
-        
-    def _create_provider(self) -> cr.Provider:
-        try:
-            provider = cr.Provider(
-                self,
-                "CustomResourceProvider",
-                on_event_handler=self.custom_lambda
-            )
-            return provider
-        except Exception as e:
-            raise RuntimeError(f"Failed to create custom resource provider: {e}")
 
-    def _create_custom_resource(self) -> CustomResource:
+    def _create_custom_resource(self):
         try:
             resource = CustomResource(
                 self,
                 "HelmValuesCustomResource",
-                service_token=self.provider.service_token,
+                service_token=self.custom_lambda.function_arn,
                 removal_policy=RemovalPolicy.RETAIN,
                 properties={
-                    "SSMParamName": self.ssm_parameter_name
+                    "SSMParamName": self.ssm_parameter_name,
+                    "deploytrigger": datetime.now().isoformat()
                 }
             )
-            return resource.get_att("HelmValues")
+
+            return resource.get_att("HelmValues").to_string()
         except Exception as e:
             raise RuntimeError(f"Failed to create custom resource: {e}")

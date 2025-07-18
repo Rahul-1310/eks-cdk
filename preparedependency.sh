@@ -1,5 +1,5 @@
 #!/bin/bash
-set -euo pipefail
+set -e
 
 BASE_DIR="srccode/lambda_dependencies"
 PYTHON_DIR="$BASE_DIR/python"

@@ -1,5 +1,7 @@
 from aws_cdk import aws_eks as eks
+from aws_cdk import Duration
 from constructs import Construct
+import json
 
 class HelmChartConstruct(Construct):
 
@@ -23,7 +25,12 @@ class HelmChartConstruct(Construct):
                 namespace="ingress-nginx",
                 release="nginx",
                 version="4.13.0",
-                values=values)
+                timeout= Duration.minutes(15),
+                values={
+                    "controller": {
+                        "replicaCount": str(values)
+                    }
+                })
             return nginxChart
         except Exception as e:
             raise RuntimeError(f"Failed to deploy Helm chart: {e}")

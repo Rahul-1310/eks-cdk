@@ -46,16 +46,11 @@ def on_create_or_update(event, context):
         raise ValueError(f"Unsupported SSM parameter value '{ssm_value}'")
 
     # Build helm values
-    helm_values = {
-        "controller": {
-            "replicaCount": replica_count
-        }
-    }
+    helm_values = replica_count
 
-    logger.info("Generated Helm values: %s", json.dumps(helm_values))
+    logger.info("Generated Helm values: %s", helm_values)
 
-    # Return helm values
-    helper.Data["HelmValues"] = json.dumps(helm_values)
+    helper.Data.update({"HelmValues": helm_values})
 
     # Return a physical resource id
     return f"HelmValues-{ssm_param_key}"

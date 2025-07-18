@@ -1,11 +1,12 @@
 from aws_cdk import (
     # Duration,
-    Stack, Fn
+    Stack, 
+    Token
 )
 import os, json, aws_cdk
 from constructs import Construct
-from bootConstructs.customLambdaResource import HelmValuesProvider
-from bootConstructs.helmResource import HelmChartConstruct
+from bootConstructs.customLambdaConstruct import HelmValuesProvider
+from bootConstructs.helmConstruct import HelmChartConstruct
 from aws_cdk import aws_eks as eks
 
 class bootstrapStack(Stack):
@@ -18,8 +19,7 @@ class bootstrapStack(Stack):
             ssmParameterName=conf.environment.ssmParameterName,
             conf=conf
         )
-        print(self.helm_values_provider.helm_values)
-        # nginx ingress controller resource
+
         HelmChartConstruct(
             self, "HelmChart",
             ekscluster=ekscluster,

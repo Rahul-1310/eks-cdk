@@ -37,8 +37,8 @@ def test_create_event(env_value, expected_replica):
 
     customHandler.on_create_or_update(event, context)
 
-    helm_values = json.loads(customHandler.helper.Data["HelmValues"])
-    assert helm_values == {"controller": {"replicaCount": expected_replica}}
+    helm_values = customHandler.helper.Data["HelmValues"]
+    assert helm_values == expected_replica
 
 @mock_aws
 @pytest.mark.parametrize("env_value,expected_replica", [
@@ -63,8 +63,8 @@ def test_update_event(env_value, expected_replica):
 
     customHandler.on_create_or_update(event, context)
 
-    helm_values = json.loads(customHandler.helper.Data["HelmValues"])
-    assert helm_values == {"controller": {"replicaCount": expected_replica}}
+    helm_values = customHandler.helper.Data["HelmValues"]
+    assert helm_values == expected_replica
 
 @mock_aws
 def test_invalid_environment_raises_error():
@@ -103,7 +103,7 @@ def test_parameter_not_found_error():
     event = build_event("nonexistent", "Create")
     context = {}
 
-    with pytest.raises(ValueError, match="SSM parameter '/nonexistent' not found"):
+    with pytest.raises(ValueError, match="SSM parameter 'nonexistent' not found"):
         customHandler.on_create_or_update(event, context)
 
 def test_delete_event_does_nothing():
@@ -114,6 +114,4 @@ def test_delete_event_does_nothing():
         }
     }
     context = {}
-
-    # Should run without throwing any errors
     customHandler.on_delete(event, context)
