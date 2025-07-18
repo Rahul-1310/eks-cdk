@@ -6,15 +6,17 @@ This is a CDK development project with Python.
 # To Run Locally
 
 1. **Configure environment**  
-   Update `conf/<envname>-config.yaml` with the necessary attributes. Acts like `*.tfvars` in Terraform to keeps the code environment-agnostic.
+   Update `conf/<envname>-config.yaml` with the necessary attributes. Acts like `*.tfvars` in Terraform to keeps the code environment agnostic.
+   
    pip install -r requirements.txt
+   
    change the kubectl layer version used here based on cluster version - aws-cdk.lambda-layer-kubectl-v<cluster-version>
 
-2. **Prepare Lambda Layer**  
+3. **Prepare Lambda Layer**  
    Run the `preparedependency.sh` script to build the Lambda layer.  
    Add required Python packages to `requirements-lambdalayer.txt`.
 
-3. **Assume AWS Role**  
+4. **Assume AWS Role**  
    Use aws profiles to authenticate locally.  
    The assumed role will need permissions to cdk deployed roles in bootstrap.
 ---
