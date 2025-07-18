@@ -4,6 +4,6 @@ omegaconf==2.0.1
 importlib
 aws-cdk.lambda-layer-kubectl-v32
 crhelper >= 2.0.8
-boto3
-moto
-pytest
+boto3 == 1.39.7
+moto == 5.1.8
+pytest == 8.4.1
