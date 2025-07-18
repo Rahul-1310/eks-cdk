@@ -1,5 +1,5 @@
 
-# CDK Python project - AWS EKS
+# CDK project - AWS EKS
 
 This is a CDK development project with Python.
 
