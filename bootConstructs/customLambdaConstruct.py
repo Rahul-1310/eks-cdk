@@ -46,6 +46,7 @@ class HelmValuesProvider(Construct):
                 self, "CustomResourceHandler",
                 runtime=_lambda.Runtime.PYTHON_3_12,
                 handler="customHandler.handler",
+                description= "Custom resource backend to fetch helm values from SSM for Ngninx Ingress Controller",
                 code=_lambda.Code.from_asset(os.path.join("srccode", "customlambda")),
                 timeout=Duration.seconds(120),
                 log_retention=logs.RetentionDays.ONE_WEEK
