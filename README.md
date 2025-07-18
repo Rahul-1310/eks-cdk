@@ -37,43 +37,36 @@ At this point you can now synthesize the CloudFormation template for this code.
 $ cdk synth
 $ cdk deploy
 ```
-Repository structure:
+# Project Structure — AWS CDK (Python)
 
-app.py # Entry point — initializes all 3 stacks
-cdk.json # CDK configuration
-cdk.context.json # Context values (e.g., lookups)
+This CDK app defines and deploys infrastructure in **three separate stacks**: `NetworkStack`, `EksStack`, and `BootstrapStack`.
 
-requirements.txt # CDK and construct library dependencies
-requirements-lambdadeploy.txt # Dependencies for Lambda layer/deployment
+# File Tree
 
-network/
-└── networkstack.py # Defines VPC, subnets, etc. for EKS
+- `app.py` — Entry point that initializes all three stacks
+- `cdk.json` — CDK configuration
+- `cdk.context.json` — Context values for lookups
+- `requirements.txt` — CDK and construct dependencies
+- `requirements-lambdadeploy.txt` — Dependencies for Lambda deployment
+- `network/`
+  - `networkstack.py` — Defines the `NetworkStack` (VPC, subnets, etc.)
+- `eks/`
+  - `eksstack.py` — Defines the `EksStack` (EKS cluster)
+- `bootstrap/`
+  - `bootstrapstack.py` — Defines the `BootstrapStack`
+- `bootConstructs/`
+  - `customLambdaConstruct.py` — CDK construct for a custom Lambda
+  - `helmConstruct.py` — CDK construct for Helm value management
+- `srccode/`
+  - `customlambda/`
+    - `customHandler.py` — Lambda handler for the custom resource
+  - `lambdadependencies/` — Additional Lambda-layer dependencies
+- `utils/`
+  - `config_loader.py` — Utility module for loading configuration
+- `tests/`
+  - `unit/`
+    - `test_customHandler.py` — Unit tests for Lambda logic
 
-eks/
-└── eksstack.py # Defines the EKS cluster and associated resources
-
-bootstrap/
-└── bootstrapstack.py # Stack for supporting resources like Lambda, Helm, etc.
-
-bootConstructs/
-├── customLambdaConstruct.py # CDK construct for deploying a custom Lambda function
-└── helmConstruct.py # CDK construct for managing Helm chart values or deployments
-
-srccode/
-├── customlambda/
-│ └── customHandler.py # Lambda function handler for custom resources
-└── lambdadependencies/ # Dependencies/code packaged with Lambda layer
-
-utils/
-└── config_loader.py # Utility functions (e.g., config parsing)
-
-tests/
-└── unit/
-└── test_customHandler.py # Unit tests for Lambda functionality
-
-markdown
-Copy
-Edit
 
 
 ## Useful commands
