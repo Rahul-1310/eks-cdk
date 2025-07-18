@@ -19,6 +19,10 @@ This is a CDK development project with Python.
 4. **Assume AWS Role**  
    Use aws profiles to authenticate locally.  
    The assumed role will need permissions to cdk deployed roles in bootstrap.
+
+5. **Test Lambda fucntion**
+   pytest -v tests/unit
+
 ---
 # To Run in CI/CD
 1. **Configure environment YAML**  
