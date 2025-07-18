@@ -6,16 +6,15 @@ This is a CDK development project with Python.
 # To Run Locally
 
 1. **Configure environment YAML**  
-   Update `conf/<envname>-config.yaml` with the necessary attributes.  
-   This file acts like `*.tfvars` in Terraform — it keeps the code environment-agnostic.
+   Update `conf/<envname>-config.yaml` with the necessary attributes. Acts like `*.tfvars` in Terraform to keeps the code environment-agnostic.
 
 2. **Prepare Lambda Layer**  
    Run the `preparedependency.sh` script to build the Lambda layer.  
    Add required Python packages to `requirements-lambdalayer.txt`.
 
 3. **Assume AWS Role**  
-   Use `aws sts assume-role` to authenticate locally.  
-   The assumed role will be used by CDK to determine the account, region, and permissions.
+   Use aws profiles to authenticate locally.  
+   The assumed role will need permissions to cdk deployed roles in bootstrap.
 ---
 # To Run in CI/CD
 1. **Configure environment YAML**  
@@ -24,12 +23,9 @@ This is a CDK development project with Python.
 2. **Handle Lambda Layer Build**  
    Ensure `preparedependency.sh` is executed as part of the CI pipeline to build the Lambda layer separately.
 
-3. **Commit Synth Files**  
-   Commit `cdk.json` and `cdk.context.json` to version control to prevent unintentional `cdk synth` changes.
-
 4. **Assume Role for Deployment**  
-   Use `sts assume-role` to authenticate.  
-   For **deterministic deployments**, hardcode the AWS `account` and `region` either in:
+   Assume a role in CI or set env vars to authenticate. Make sure the role has assume role permissions to cdk deployment roles.
+   For deterministic deployments, hardcode the AWS `account` and `region` either in:
    - `app.py`  
    - Or the CI/CD runner’s environment variables
 ---
@@ -37,10 +33,9 @@ This is a CDK development project with Python.
 
 -  The SSM parameter `/platform/account/env` is **pre-created** outside of CDK as a prerequisite.
 -  Basic VPC networking and EKS infrastructure is already created using CDK L2 constructs with reasonable defaults.
--  Only the Helm value `controller.replicaCount` is dynamically generated — all other Helm values are assumed to use standard chart defaults.
--  Although Helm resources **should ideally be decoupled** from the EKS stack for better lifecycle separation, they are handled in the same app here for simplicity.
--  In bootConstructs/customLambdaConstruct.py - "deploytrigger" is used to trigger recreation of customResource on every deployment as ssm parameter is managed outside CDK.
-
+-  Only the Helm value `controller.replicaCount` is dynamically generated. all other Helm values are assumed to use chart defaults.
+-  Helm resources are decoupled from the EKS stack for better lifecycle separation, but are handled in the same app here for ease of deployment. Better to be handled separately in general.
+-  In bootConstructs/customLambdaConstruct.py "deploytrigger" is used to trigger recreation of customResource on every deployment as ssm parameter is managed outside CDK.
 
 Follow the below prerequisites to run locally:
 
@@ -59,7 +54,7 @@ At this point you can now synthesize the CloudFormation template for this code.
 $ cdk synth
 $ cdk deploy
 ```
-# Project Structure — AWS CDK (Python)
+# Project Structure
 
 This CDK app defines and deploys infrastructure in **three separate stacks**: `NetworkStack`, `EksStack`, and `BootstrapStack`.
 
