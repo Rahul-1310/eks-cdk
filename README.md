@@ -41,10 +41,11 @@ This is a CDK development project with Python.
 -  Although Helm resources **should ideally be decoupled** from the EKS stack for better lifecycle separation, they are handled in the same app here for simplicity.
 
 
-Follow the below steps to run locally:
+Follow the below prerequisites to run locally:
 
 Install all required dependencies.
 ```
+$ source .venv/bin/activate
 $ pip install -r requirements.txt
 ```
 This creates a package for custom resource lambda's layer.
