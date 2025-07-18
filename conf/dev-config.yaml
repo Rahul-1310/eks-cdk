@@ -1,6 +1,5 @@
 environment: 
   ssmParameterName: "/platform/account/env"
-  ssmParameterValue: "development"
   name: dev
   tags:
     - key: project
@@ -14,11 +13,9 @@ vpc:
     enabled: true
     primary_cidr_masks: 
     - 24
-    - 24
   private_subnets: 
     enabled: true
     primary_cidr_masks: 
-    - 24
     - 24
   nat_gateways:
     enabled: true

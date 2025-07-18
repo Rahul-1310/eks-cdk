@@ -82,7 +82,7 @@ def test_invalid_environment_raises_error():
     customHandler.ssm_client = ssm_client
     customHandler.helper.Data.clear()
 
-    with pytest.raises(ValueError, match="Unsupported SSM parameter value 'qa'"):
+    with pytest.raises(ValueError, match="Unsupported SSM parameter value 'qa'. Supported values are 'development', 'staging', 'production'."):
         customHandler.on_create_or_update(event, context)
 
 

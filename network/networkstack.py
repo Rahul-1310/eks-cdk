@@ -66,7 +66,7 @@ class NetworkStack(Stack):
                 cidr=conf.vpc.cidr,
                 max_azs=conf.vpc.azs,
                 nat_gateways=1 if bool(conf.vpc.nat_gateways.enabled) else 0,
-                nat_gateway_subnets=nat_subnet_selection,
+                nat_gateway_subnets=nat_subnet_selection if bool(conf.vpc.nat_gateways.enabled) else None,
                 subnet_configuration=subnet_config
             )
         except Exception as e:

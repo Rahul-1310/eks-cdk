@@ -20,12 +20,16 @@ class bootstrapStack(Stack):
             conf=conf
         )
 
-        HelmChartConstruct(
+        self.helmchart = HelmChartConstruct(
             self, "HelmChart",
             ekscluster=ekscluster,
             helm_values=self.helm_values_provider.helm_values,
             #helm_values=helm_values_provider.helm_values,
             conf=conf
         )
+
+        self.helmchart.node.add_dependency(self.helm_values_provider)
+
+
         
         

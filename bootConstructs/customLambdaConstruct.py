@@ -69,10 +69,10 @@ class HelmValuesProvider(Construct):
                 self,
                 "HelmValuesCustomResource",
                 service_token=self.custom_lambda.function_arn,
-                removal_policy=RemovalPolicy.RETAIN,
+                removal_policy=RemovalPolicy.DESTROY,
                 properties={
                     "SSMParamName": self.ssm_parameter_name,
-                    "deploytrigger": datetime.now().isoformat()
+                    "deploytrigger": datetime.now().isoformat() # Trigger to ensure the resource is recreated on every deployment.
                 }
             )
 

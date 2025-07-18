@@ -28,12 +28,12 @@ def on_create_or_update(event, context):
             WithDecryption=True
         )
         ssm_value = response['Parameter']['Value']
-        logger.info("Fetched SSM parameter '%s' with value: %s", ssm_param_key, ssm_value)
+        logger.info(f"Fetched SSM parameter {ssm_param_key} with value: {ssm_value}")
     except ssm_client.exceptions.ParameterNotFound:
-        logger.error("SSM parameter '%s' not found", ssm_param_key)
+        logger.error(f"SSM parameter {ssm_param_key} not found")
         raise ValueError(f"SSM parameter '{ssm_param_key}' not found")
     except Exception as e:
-        logger.error("Error fetching SSM parameter: %s", str(e))
+        logger.error(f"Error fetching SSM parameter: {str(e)}")
         raise RuntimeError(f"Error fetching SSM parameter: {str(e)}")
 
     # Determine replicaCount based on SSM value
@@ -42,8 +42,8 @@ def on_create_or_update(event, context):
     elif ssm_value.strip().lower() in ("staging", "production"):
         replica_count = 2
     else:
-        logger.error("Unsupported SSM parameter value: '%s'", ssm_value)
-        raise ValueError(f"Unsupported SSM parameter value '{ssm_value}'")
+        logger.error("Unsupported SSM parameter value: {ssm_value}. Supported values are 'development', 'staging', 'production'.")
+        raise ValueError(f"Unsupported SSM parameter value {ssm_value}. Supported values are 'development', 'staging', 'production'.")
 
     # Build helm values
     helm_values = replica_count

@@ -1,16 +1,15 @@
 from aws_cdk import (
     # Duration,
-    Stack, Fn
+    Stack,
+    CfnOutput,
+    aws_ec2 as ec2,
+    aws_iam as iam,
+    aws_eks as eks,
     # aws_sqs as sqs,
 )
 import os
 import aws_cdk
 from constructs import Construct
-from aws_cdk import aws_ec2 as ec2
-from aws_cdk import aws_iam as iam
-from aws_cdk import aws_eks as eks
-from aws_cdk import CfnOutput
-from aws_cdk import aws_ssm as ssm
 #from aws_cdk.lambda_layer_kubectl_v33 import KubectlV33Layer
 import importlib
 
@@ -29,7 +28,7 @@ class EksStack(Stack):
             raise ValueError("VPC does not have NAT gateway(s), but PRIVATE_WITH_EGRESS subnets are used.")
 
         eks_master_role = iam.Role(self, 'EksMasterRole',
-                                   role_name='EksAdminRole',
+                                   role_name='EksMasterRole',
                                    assumed_by=iam.AccountRootPrincipal()
         )
 
@@ -37,7 +36,7 @@ class EksStack(Stack):
         self.cluster = eks.Cluster(self, 'Cluster',
                               vpc=_vpc,
                               version=self.kubernetes_version,
-                              cluster_name = f"{conf.environment.name}-cluster",
+                              cluster_name = f"{conf.environment.name}-eks",
                               kubectl_layer=self.kubectl_layer_class(self, "kubectl"),
                               masters_role=eks_master_role,
                               authentication_mode=eks.AuthenticationMode.API_AND_CONFIG_MAP,
@@ -52,8 +51,8 @@ class EksStack(Stack):
             self.admin_access = self.grant_admin_access(conf.eks.admin_access)
         # Create a managed node group
         self.cluster.add_nodegroup_capacity(
-                f"{conf.environment.name}-nodegroup",
-                nodegroup_name=f"{conf.environment.name}-managed",
+                f"{conf.environment.name}-ng",
+                nodegroup_name=f"{conf.environment.name}-nodepool",
                 capacity_type=eks.CapacityType.ON_DEMAND,
                 min_size=conf.eks.node_group.managed.min,
                 max_size=conf.eks.node_group.managed.max,
@@ -134,7 +133,7 @@ class EksStack(Stack):
                 )
         for entity in entities:
             if isinstance(entity, str):
-                eks.AccessEntry(self, f"MyAccessEntry-{entity}",
+                eks.AccessEntry(self, f"access-{entity}",
                     access_policies=[accessPolicy],
                     cluster=self.cluster,
                     principal=entity
