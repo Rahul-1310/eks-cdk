@@ -39,7 +39,42 @@ $ cdk deploy
 ```
 Repository structure:
 
-app.py
+app.py # Entry point — initializes all 3 stacks
+cdk.json # CDK configuration
+cdk.context.json # Context values (e.g., lookups)
+
+requirements.txt # CDK and construct library dependencies
+requirements-lambdadeploy.txt # Dependencies for Lambda layer/deployment
+
+network/
+└── networkstack.py # Defines VPC, subnets, etc. for EKS
+
+eks/
+└── eksstack.py # Defines the EKS cluster and associated resources
+
+bootstrap/
+└── bootstrapstack.py # Stack for supporting resources like Lambda, Helm, etc.
+
+bootConstructs/
+├── customLambdaConstruct.py # CDK construct for deploying a custom Lambda function
+└── helmConstruct.py # CDK construct for managing Helm chart values or deployments
+
+srccode/
+├── customlambda/
+│ └── customHandler.py # Lambda function handler for custom resources
+└── lambdadependencies/ # Dependencies/code packaged with Lambda layer
+
+utils/
+└── config_loader.py # Utility functions (e.g., config parsing)
+
+tests/
+└── unit/
+└── test_customHandler.py # Unit tests for Lambda functionality
+
+markdown
+Copy
+Edit
+
 
 ## Useful commands
 
